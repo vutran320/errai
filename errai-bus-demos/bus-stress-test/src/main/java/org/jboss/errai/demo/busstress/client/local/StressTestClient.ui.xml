@@ -1,0 +1,93 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+  <ui:style>
+    .important {
+    	font-weight: bold;
+    }
+    .error {
+    }
+  </ui:style>
+  <g:HTMLPanel>
+    <p>
+        This simple application sends messages across the bus, and a service on the server echoes them back.
+        You choose how often to send messages and how big the payload in each message is.
+    </p>
+    <p>
+        Note: if you change the numbers while the stress test is running, you have to press the Start button
+        again before your changes take effect.
+    </p>
+    <h1>Settings</h1>
+  	<g:Grid width="0%" height="0%">
+  		<g:row>
+  			<g:customCell>
+  				<g:Label text="Message interval (ms)"/>
+  			</g:customCell>
+  			<g:customCell>
+  				<g:Label text="Message Size (bytes)"/>
+  			</g:customCell>
+  		</g:row>
+  		<g:row>
+  			<g:customCell>
+  				<g:IntegerBox ui:field="messageInterval"/>
+  			</g:customCell>
+  			<g:customCell>
+  				<g:IntegerBox ui:field="messageSize"/>
+  			</g:customCell>
+  		</g:row>
+  		<g:row>
+  			<g:customCell>
+  				<g:Label ui:field="messageIntervalError" styleName="error"/>
+  			</g:customCell>
+  			<g:customCell>
+  				<g:Label ui:field="messageSizeError" styleName="error"/>
+  			</g:customCell>
+  		</g:row>
+  	</g:Grid>
+
+    <g:HorizontalPanel>
+    	<g:Button ui:field="startButton">Start</g:Button>
+    	<g:Button ui:field="stopButton">Stop</g:Button>
+    </g:HorizontalPanel>
+    
+    <h1>Results</h1>
+    <g:Grid>
+        <g:row>
+            <g:customCell>
+                <g:Label text="Messages Sent"/>
+            </g:customCell>
+            <g:customCell>
+                <g:Label text="(pending...)" ui:field="messageSendCount"/>
+            </g:customCell>
+            <g:customCell>
+            	<g:HorizontalPanel>
+            		<g:Label text="(pending...)" ui:field="messageSendBytes"/>
+            		<g:Label text=" bytes"/>
+            	</g:HorizontalPanel>
+            </g:customCell>
+        </g:row>
+        <g:row>
+        	<g:customCell>
+        		<g:Label text="Messages in flight"/>
+        	</g:customCell>
+        	<g:customCell>
+        		<g:Label text="(pending...)" ui:field="inFlightCount"/>
+        	</g:customCell>
+        </g:row>
+        <g:row>
+            <g:customCell>
+                <g:Label text="Messages Received"/>
+            </g:customCell>
+            <g:customCell>
+                <g:Label text="(pending...)" ui:field="messageRecvCount"/>
+            </g:customCell>
+            <g:customCell>
+                <g:HorizontalPanel>
+                    <g:Label text="(pending...)" ui:field="messageRecvBytes"/>
+                    <g:Label text=" bytes"/>
+                </g:HorizontalPanel>
+            </g:customCell>
+        </g:row>
+    </g:Grid>
+    
+  </g:HTMLPanel>
+</ui:UiBinder> 
