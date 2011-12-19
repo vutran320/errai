@@ -5,7 +5,7 @@ import org.jboss.errai.bus.client.api.MessageCallback;
 import org.jboss.errai.bus.client.api.base.MessageBuilder;
 import org.jboss.errai.bus.client.api.builder.MessageBuildSendable;
 import org.jboss.errai.bus.client.framework.MessageBus;
-import org.jboss.errai.bus.client.protocols.MessageParts;
+import org.jboss.errai.demo.busstress.client.shared.Stats;
 import org.jboss.errai.ioc.client.api.EntryPoint;
 
 import com.google.gwt.core.client.GWT;
@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.IntegerBox;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
@@ -26,18 +27,12 @@ import com.google.inject.Inject;
 public class StressTestClient extends Composite {
 
   private static StressTestClientUiBinder uiBinder = GWT.create(StressTestClientUiBinder.class);
-  @UiField Label messageSendCount;
-  @UiField Label messageSendBytes;
-  @UiField Label messageRecvCount;
-  @UiField Label messageRecvBytes;
 
   @UiField IntegerBox messageInterval;
   @UiField Label messageIntervalError;
 
   @UiField IntegerBox messageSize;
   @UiField Label messageSizeError;
-
-  @UiField Label inFlightCount;
 
   @UiField Button startButton;
   @UiHandler("startButton")
@@ -51,35 +46,11 @@ public class StressTestClient extends Composite {
     stopIfRunning();
   }
 
+  @UiField VerticalPanel resultsPanel;
 
   @Inject private MessageBus bus;
 
   private Timer sendTimer;
-
-  private Stats stats = new Stats();
-
-  static class Stats {
-    int inflightMessages;
-    int totalWaitTime;
-
-    int receivedBytes;
-    int receivedMessages;
-
-    int sentBytes;
-    int sentMessages;
-
-    public void registerReceivedMessage(Message message) {
-      inflightMessages--;
-      receivedMessages++;
-      receivedBytes += message.get(String.class, MessageParts.Value).length();
-    }
-
-    public void registerSentMessage(Message message) {
-      inflightMessages++;
-      sentMessages++;
-      sentBytes += message.get(String.class, MessageParts.Value).length();
-    }
-  }
 
   /**
    * The message payload that gets sent to the server.
@@ -101,6 +72,10 @@ public class StressTestClient extends Composite {
     }
     stopIfRunning();
 
+    final Stats stats = new Stats();
+    final StatsPanel statsPanel = new StatsPanel();
+    resultsPanel.insert(statsPanel, 0);
+
     // create the message payload
     Integer messageSizeInt = messageSize.getValue();
     StringBuilder sb = new StringBuilder(messageSizeInt);
@@ -110,7 +85,10 @@ public class StressTestClient extends Composite {
     messageValue = sb.toString();
 
     sendTimer = new Timer() {
+      private boolean hasStarted;
+
       @Override public void run() {
+        hasStarted = true;
         MessageBuildSendable sendable = MessageBuilder.createMessage()
         .toSubject("StressTestService")
         .withValue(messageValue)
@@ -119,15 +97,26 @@ public class StressTestClient extends Composite {
           @Override
           public void callback(Message message) {
             stats.registerReceivedMessage(message);
-            updateStatsLabels();
+            statsPanel.updateStatsLabels(stats);
           }
         });
         sendable.sendNowWith(bus);
         stats.registerSentMessage(sendable.getMessage());
-        updateStatsLabels();
+        statsPanel.updateStatsLabels(stats);
+      }
+
+      @Override public void cancel() {
+        super.cancel();
+        if (hasStarted) {
+          stats.registerTestFinishing();
+          statsPanel.onRunFinished(stats);
+        }
       }
     };
     sendTimer.scheduleRepeating(messageInterval.getValue());
+
+    stats.registerTestStarting();
+    statsPanel.onRunStarted(stats);
   }
 
   private boolean validateSettings() {
@@ -164,17 +153,6 @@ public class StressTestClient extends Composite {
       sendTimer.cancel();
       sendTimer = null;
     }
-  }
-
-  /**
-   * Updates the labels in the UI based on the values in {@link #stats}.
-   */
-  private void updateStatsLabels() {
-    inFlightCount.setText("" + stats.inflightMessages);
-    messageSendBytes.setText("" + stats.sentBytes);
-    messageSendCount.setText("" + stats.sentMessages);
-    messageRecvBytes.setText("" + stats.receivedBytes);
-    messageRecvCount.setText("" + stats.receivedMessages);
   }
 
 }

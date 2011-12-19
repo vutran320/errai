@@ -20,18 +20,24 @@
   	<g:Grid width="0%" height="0%">
   		<g:row>
   			<g:customCell>
-  				<g:Label text="Message interval (ms)"/>
+  				<g:Label text="Message interval (ms)" styleName="formLabel"/>
   			</g:customCell>
   			<g:customCell>
-  				<g:Label text="Message Size (bytes)"/>
+  				<g:Label text="Message Size (bytes)" styleName="formLabel"/>
   			</g:customCell>
   		</g:row>
   		<g:row>
   			<g:customCell>
-  				<g:IntegerBox ui:field="messageInterval"/>
+  				<g:IntegerBox ui:field="messageInterval" text="250" width="150px"/>
   			</g:customCell>
   			<g:customCell>
-  				<g:IntegerBox ui:field="messageSize"/>
+  				<g:IntegerBox ui:field="messageSize" text="100" width="150px"/>
+  			</g:customCell>
+  			<g:customCell>
+  				<g:HorizontalPanel>
+    	<g:Button ui:field="startButton">Start</g:Button>
+    	<g:Button ui:field="stopButton">Stop</g:Button>
+    </g:HorizontalPanel>
   			</g:customCell>
   		</g:row>
   		<g:row>
@@ -43,51 +49,9 @@
   			</g:customCell>
   		</g:row>
   	</g:Grid>
-
-    <g:HorizontalPanel>
-    	<g:Button ui:field="startButton">Start</g:Button>
-    	<g:Button ui:field="stopButton">Stop</g:Button>
-    </g:HorizontalPanel>
     
     <h1>Results</h1>
-    <g:Grid>
-        <g:row>
-            <g:customCell>
-                <g:Label text="Messages Sent"/>
-            </g:customCell>
-            <g:customCell>
-                <g:Label text="(pending...)" ui:field="messageSendCount"/>
-            </g:customCell>
-            <g:customCell>
-            	<g:HorizontalPanel>
-            		<g:Label text="(pending...)" ui:field="messageSendBytes"/>
-            		<g:Label text=" bytes"/>
-            	</g:HorizontalPanel>
-            </g:customCell>
-        </g:row>
-        <g:row>
-        	<g:customCell>
-        		<g:Label text="Messages in flight"/>
-        	</g:customCell>
-        	<g:customCell>
-        		<g:Label text="(pending...)" ui:field="inFlightCount"/>
-        	</g:customCell>
-        </g:row>
-        <g:row>
-            <g:customCell>
-                <g:Label text="Messages Received"/>
-            </g:customCell>
-            <g:customCell>
-                <g:Label text="(pending...)" ui:field="messageRecvCount"/>
-            </g:customCell>
-            <g:customCell>
-                <g:HorizontalPanel>
-                    <g:Label text="(pending...)" ui:field="messageRecvBytes"/>
-                    <g:Label text=" bytes"/>
-                </g:HorizontalPanel>
-            </g:customCell>
-        </g:row>
-    </g:Grid>
+    <g:VerticalPanel width="100%" ui:field="resultsPanel"/>
     
   </g:HTMLPanel>
 </ui:UiBinder> 

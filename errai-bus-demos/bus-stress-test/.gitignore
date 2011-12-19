@@ -4,3 +4,5 @@ war/org.jboss.errai.demo.busstress.App.JUnit
 .project
 .gwt
 .settings
+war/App
+war/WEB-INF/lib

@@ -40,8 +40,11 @@ public class HelloWorldClientTest extends AbstractErraiTest {
           @Override
           public void run() {
             client.stopIfRunning();
-            assertTrue("Expected at least one message received; got " + client.messageRecvCount,
-                Integer.parseInt(client.messageRecvCount.getText()) > 0);
+            StatsPanel statsPanel = (StatsPanel) client.resultsPanel.getWidget(0);
+            assertNotNull("Stats panel should have been added to results panel", statsPanel);
+
+            assertTrue("Expected at least one message received; got " + statsPanel.messageRecvCount,
+                Integer.parseInt(statsPanel.messageRecvCount.getText()) > 0);
             finishTest();
           }
         }.schedule(2000);
