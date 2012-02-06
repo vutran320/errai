@@ -1,0 +1,13 @@
+.idea/*
+.classpath
+.settings
+.project
+.metadata/*
+*.iml
+target/
+
+*.versionsBackup
+build.log
+classes/
+deploy/
+*Module.JUnit/
